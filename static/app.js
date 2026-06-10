@@ -14,6 +14,33 @@ const TOOL_LABELS = {
   summarize_email: "Summarize email",
 };
 
+const WELCOME_HTML = `
+  <div class="welcome">
+    <div class="welcome-card">
+      <div class="welcome-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+      </div>
+      <h2>How can I help with your inbox?</h2>
+      <p>Read, summarize, send, or organize your emails — just ask naturally or pick a suggestion below.</p>
+      <div class="suggestion-chips">
+        <button class="chip" data-prompt="Read my latest unread emails">📬 Read unread emails</button>
+        <button class="chip" data-prompt="Summarize my most recent unread email">📝 Summarize latest</button>
+        <button class="chip" data-prompt="Help me compose a professional email reply">✍️ Compose a reply</button>
+        <button class="chip" data-prompt="Label my latest email as Important">🏷️ Label as important</button>
+      </div>
+    </div>
+  </div>
+`;
+
+function bindChips() {
+  document.querySelectorAll(".chip, .action-btn").forEach((btn) => {
+    btn.addEventListener("click", () => sendMessage(btn.dataset.prompt));
+  });
+}
+
 function removeWelcome() {
   if (!welcomeRemoved) {
     const welcome = messagesEl.querySelector(".welcome");
@@ -33,15 +60,23 @@ function createMessage(role, content, toolsUsed = []) {
   const wrapper = document.createElement("div");
   wrapper.className = `message ${role}`;
 
+  const avatar = document.createElement("div");
+  avatar.className = "message-avatar";
+  avatar.textContent = role === "user" ? "You" : "AI";
+  wrapper.appendChild(avatar);
+
+  const body = document.createElement("div");
+  body.className = "message-body";
+
   const label = document.createElement("div");
   label.className = "message-label";
-  label.textContent = role === "user" ? "You" : "Agent";
-  wrapper.appendChild(label);
+  label.textContent = role === "user" ? "You" : "Mail Agent";
+  body.appendChild(label);
 
   const bubble = document.createElement("div");
   bubble.className = "message-bubble";
   bubble.textContent = content;
-  wrapper.appendChild(bubble);
+  body.appendChild(bubble);
 
   if (toolsUsed.length > 0) {
     const badges = document.createElement("div");
@@ -57,9 +92,10 @@ function createMessage(role, content, toolsUsed = []) {
       `;
       badges.appendChild(badge);
     });
-    wrapper.appendChild(badges);
+    body.appendChild(badges);
   }
 
+  wrapper.appendChild(body);
   messagesEl.appendChild(wrapper);
   messagesEl.scrollTop = messagesEl.scrollHeight;
   return wrapper;
@@ -71,9 +107,12 @@ function showTypingIndicator() {
   el.className = "message agent";
   el.id = "typing";
   el.innerHTML = `
-    <div class="message-label">Agent</div>
-    <div class="typing-indicator">
-      <span></span><span></span><span></span>
+    <div class="message-avatar">AI</div>
+    <div class="message-body">
+      <div class="message-label">Mail Agent</div>
+      <div class="typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
     </div>
   `;
   messagesEl.appendChild(el);
@@ -142,29 +181,15 @@ messageInput.addEventListener("keydown", (e) => {
 
 messageInput.addEventListener("input", autoResize);
 
-document.querySelectorAll(".action-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    sendMessage(btn.dataset.prompt);
-  });
-});
+bindChips();
 
 resetBtn.addEventListener("click", async () => {
   if (isLoading) return;
   try {
     await fetch("/api/reset", { method: "POST" });
   } catch { /* ignore */ }
-  messagesEl.innerHTML = `
-    <div class="welcome">
-      <div class="welcome-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="2" y="4" width="20" height="16" rx="2"/>
-          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-        </svg>
-      </div>
-      <h2>How can I help with your inbox?</h2>
-      <p>Ask me to read, summarize, send, or label emails — or use a quick action on the left.</p>
-    </div>
-  `;
+  messagesEl.innerHTML = WELCOME_HTML;
   welcomeRemoved = false;
+  bindChips();
   messageInput.focus();
 });
