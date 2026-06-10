@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mail Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+          <span>Mail Agent</span>
+        </div>
+        <p class="tagline">Your AI Gmail assistant</p>
+      </div>
+
+      <nav class="quick-actions">
+        <p class="section-label">Quick actions</p>
+        <button class="action-btn" data-prompt="Read my latest unread emails">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Read unread emails
+        </button>
+        <button class="action-btn" data-prompt="Summarize my most recent unread email">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="17" y1="10" x2="3" y2="10"/>
+            <line x1="21" y1="6" x2="3" y2="6"/>
+            <line x1="21" y1="14" x2="3" y2="14"/>
+            <line x1="17" y1="18" x2="3" y2="18"/>
+          </svg>
+          Summarize latest email
+        </button>
+        <button class="action-btn" data-prompt="Help me compose a professional email reply">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Compose a reply
+        </button>
+        <button class="action-btn" data-prompt="Label my latest email as Important">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+            <line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+          Label as Important
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="reset-btn" class="reset-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+          New conversation
+        </button>
+      </div>
+    </aside>
+
+    <main class="chat-area">
+      <header class="chat-header">
+        <h1>Chat</h1>
+        <span class="status-dot" title="Connected"></span>
+      </header>
+
+      <div id="messages" class="messages">
+        <div class="welcome">
+          <div class="welcome-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </div>
+          <h2>How can I help with your inbox?</h2>
+          <p>Ask me to read, summarize, send, or label emails — or use a quick action on the left.</p>
+        </div>
+      </div>
+
+      <form id="chat-form" class="input-area">
+        <div class="input-wrapper">
+          <textarea
+            id="message-input"
+            placeholder="Ask about your emails..."
+            rows="1"
+            autofocus
+          ></textarea>
+          <button type="submit" id="send-btn" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <p class="input-hint">Press Enter to send · Shift+Enter for new line</p>
+      </form>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

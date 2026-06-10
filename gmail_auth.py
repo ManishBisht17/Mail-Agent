@@ -18,6 +18,11 @@ def get_gmail_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            if not os.path.exists("credentials.json"):
+                raise FileNotFoundError(
+                    "credentials.json not found. Download OAuth credentials from "
+                    "Google Cloud Console and place the file in the project folder."
+                )
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_local_server(port=0)
         with open("token.json", "w") as f:

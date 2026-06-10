@@ -1,13 +1,22 @@
 import base64
 import email as email_lib
-from langchain.tools import tool
+from langchain_core.tools import tool
 from gmail_auth import get_gmail_service
 
-service = get_gmail_service()
+_service = None
+
+
+def _get_service():
+    global _service
+    if _service is None:
+        _service = get_gmail_service()
+    return _service
+
 
 @tool
 def read_emails(max_results: int = 5) -> str:
     """Reads the latest unread emails from Gmail inbox."""
+    service = _get_service()
     results = service.users().messages().list(
         userId="me", labelIds=["INBOX", "UNREAD"], maxResults=max_results
     ).execute()
@@ -34,6 +43,7 @@ def read_emails(max_results: int = 5) -> str:
 @tool
 def send_email(to: str, subject: str, body: str) -> str:
     """Sends an email. Args: to (recipient email), subject, body."""
+    service = _get_service()
     message = email_lib.message.EmailMessage()
     message["To"]      = to
     message["Subject"] = subject
@@ -49,6 +59,7 @@ def send_email(to: str, subject: str, body: str) -> str:
 @tool
 def label_email(message_id: str, label_name: str) -> str:
     """Adds a label to an email. Creates the label if it doesn't exist."""
+    service = _get_service()
     existing = service.users().labels().list(userId="me").execute().get("labels", [])
     label_id = next((l["id"] for l in existing if l["name"] == label_name), None)
 
@@ -67,6 +78,7 @@ def label_email(message_id: str, label_name: str) -> str:
 @tool
 def summarize_email(message_id: str) -> str:
     """Gets the full body of a specific email by its ID."""
+    service = _get_service()
     data = service.users().messages().get(
         userId="me", id=message_id, format="full"
     ).execute()

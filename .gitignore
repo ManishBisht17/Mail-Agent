@@ -1,6 +1,7 @@
 venv/
 token.json
 credentials.json
+chat_history.json
 .env
 __pycache__/
 *.pyc
